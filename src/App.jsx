@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { OrdersProvider } from "./context/OrdersContext";
 import Delivered from "./pages/Delivered";
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
-export const currency = '$'
+export const currency = 'PKR '
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):'');

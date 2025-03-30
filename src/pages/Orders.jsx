@@ -49,7 +49,6 @@ const Orders = ({ token }) => {
 return (
   <div>
     <h3>Order Page</h3>
-    {console.log("pre",orders)}
     {orders.length === 0 ? (
       <p>No orders found.</p>
     ) : (
@@ -109,7 +108,6 @@ return (
         )
       )
     )}
-    {console.log(orders)}
   </div>
 );
 

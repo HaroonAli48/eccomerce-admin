@@ -5,16 +5,16 @@ import { toast } from 'react-toastify';
 
 const List = ({ token }) => {
   const [list, setList] = useState([]);
+  const [value, setValue] = useState(true);
 
   const fetchList = async () => {
     try {
-      const response = await axios.get(backendUrl + "/api/product/list");
+      const response = await axios.get(`${backendUrl}/api/product/list`);
       if (response.data.success) {
         setList(response.data.products);
       } else {
         toast.error(response.data.message);
       }
-      console.log(response.data);
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -23,11 +23,36 @@ const List = ({ token }) => {
 
   const removeProduct = async (id) => {
     try {
-      const response = await axios.post(backendUrl + '/api/product/remove', { id }, { headers: { token } });
+      const response = await axios.post(
+        `${backendUrl}/api/product/remove`,
+        { id },
+        { headers: { token } }
+      );
 
       if (response.data.success) {
         toast.success(response.data.message);
         await fetchList();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const toggleStatus = async (id, stock) => {
+    try {
+      const updatedStock = !stock;
+      const response = await axios.post(
+        `${backendUrl}/api/product/update`,
+        { id, stock: updatedStock },
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        toast.success('Stock status updated');
+        fetchList();
       } else {
         toast.error(response.data.message);
       }
@@ -44,27 +69,43 @@ const List = ({ token }) => {
   return (
     <>
       <p className="mb-2">All Products List</p>
-      <div className='flex flex-col gap-2'>
-        <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
+      <div className="flex flex-col gap-2">
+        <div className="hidden md:grid grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm">
           <b>Image</b>
           <b>Name</b>
           <b>Category</b>
           <b>Price</b>
-          <b className='text-center'>Action</b>
+          <b className="text-center">Action</b>
+          <b className="text-center">Stock</b>
         </div>
-        
+
         {list.map((item, index) => (
-          <div className='grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center py-1 px-2 gap-2 text-sm' key={index}>
-            <img className='w-12' src={item.image[0]} alt={item.name} />
+          <div
+            className="grid grid-cols-[1fr_2fr_1fr_1fr_0.5fr_0.5fr] md:grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 gap-2 text-sm"
+            key={index}
+          >
+            <img className="min-w-12 max-w-12" src={item.image[0]} alt={item.name} />
             <p>{item.name}</p>
             <p>{item.category}</p>
-            <p>{currency}{item.price}</p>
-            <p 
-              onClick={() => removeProduct(item._id)} 
-              className='text-right md:text-center cursor-pointer text-lg'
+            <p>
+              {currency}
+              {item.price}
+            </p>
+            <p
+              onClick={() => removeProduct(item._id)}
+              className="text-right md:text-center text-red-700 cursor-pointer text-lg"
             >
               X
             </p>
+            <input
+              type="checkbox"
+              checked={Boolean(item.stock)} // Ensure it's always boolean
+              name="stock"
+              onChange={() => {
+                window.location.reload();
+                toggleStatus(item._id, item.stock);
+              }}
+            />
           </div>
         ))}
       </div>
