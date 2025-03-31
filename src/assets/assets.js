@@ -5,6 +5,7 @@ import upload_area from './upload_area.png'
 import parcel_icon from './parcel_icon.svg'
 import list_icon from './list.png'
 import whatsapp from './whatsapp.png'
+
 export const assets = {
     logo,
     add_icon,
