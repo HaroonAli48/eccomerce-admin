@@ -14,14 +14,15 @@ const Add = ({token}) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price,setPrice] = useState("");
-  const [category,setCategory] = useState("Men");
-  const [subCategory,setSubCategory] = useState("Topwear");
+  const [category,setCategory] = useState("Women");
+  const [subCategory,setSubCategory] = useState("Summerwear");
   const [bestseller,setBestseller] = useState(false);
   const [sizes,setSizes] = useState([]);
+  const [loading,setLoading] = useState(false);
 
   const onSubmitHandler = async (e)=>{
     e.preventDefault();
-
+    setLoading(true);
     try {
       
       const formData = new FormData();
@@ -50,6 +51,7 @@ const Add = ({token}) => {
         setImage3(false)
         setImage4(false)
         setPrice('')
+        setSizes([])
       }else{
         toast.error(response.data.message)
       }
@@ -58,6 +60,9 @@ const Add = ({token}) => {
     } catch (error) {
       console.log(error)
       toast.error(error.message)
+    }
+    finally{
+      setLoading(false);
     }
   }
 
@@ -95,8 +100,8 @@ const Add = ({token}) => {
         <div >
           <p className='mb-2'>Product Category</p>
           <select onChange={(e)=>setCategory(e.target.value)} className='w-full px-3 py-2'>
+            <option value="Women">Women</option>
             <option value="Men">Men</option>
-            <option value="Kids">Women</option>
             <option value="Kids">Kids</option>
           </select>
         </div>
@@ -104,6 +109,7 @@ const Add = ({token}) => {
         <div>
           <p className='mb-2'>Sub Category</p>
           <select className='w-full px-3 py-2' onChange={(e)=>setSubCategory(e.target.value)}>
+            <option value="Summerwear">Summerwear</option>
             <option value="Topwear">Topwear</option>
             <option value="Bottomwear">Bottomwear</option>
             <option value="Winterwear">Winterwear</option>
@@ -140,7 +146,7 @@ const Add = ({token}) => {
       <input onChange={()=>setBestseller(prev=>!prev)} checked={bestseller} type="checkbox" id="bestseller" />
       <label htmlFor="bestseller" className='cursor-pointer'>Add to Bestseller</label>
     </div>
-    <button type="submit" className='w-28 py-3 mt-4 bg-black text-white'>ADD</button>
+    <button type="submit" className='w-28 py-3 mt-4 bg-black text-white'>{loading?'Adding...':'ADD'}</button>
   </form>
   )
 }
