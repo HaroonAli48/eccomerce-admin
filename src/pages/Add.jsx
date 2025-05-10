@@ -19,10 +19,12 @@ const Add = ({token}) => {
   const [bestseller,setBestseller] = useState(false);
   const [sizes,setSizes] = useState([]);
   const [loading,setLoading] = useState(false);
+  const [submit, setSubmit]  = useState(false)
 
   const onSubmitHandler = async (e)=>{
     e.preventDefault();
     setLoading(true);
+    setSubmit(true)
     try {
       
       const formData = new FormData();
@@ -63,6 +65,7 @@ const Add = ({token}) => {
     }
     finally{
       setLoading(false);
+      setSubmit(false)
     }
   }
 
@@ -123,7 +126,7 @@ const Add = ({token}) => {
     </div>
     <div>
       <p className='mb-2'>Product Sizes</p>
-      <div className='flex gap-3'>
+      <div className='grid grid-cols-[1fr_1fr_2fr] gap-3'>
         <div onClick={()=>setSizes(prev => prev.includes("S")?prev.filter(item=>item!=="S"):[...prev,"S"])}>
           <p className={`${sizes.includes("S")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>S</p>
         </div>
@@ -131,13 +134,16 @@ const Add = ({token}) => {
           <p className={`${sizes.includes("M")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>M</p>
         </div>
         <div onClick={()=>setSizes(prev => prev.includes("L")?prev.filter(item=>item!=="L"):[...prev,"L"])}>
-          <p className={`${sizes.includes("L")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>L</p>
+          <p className={`${sizes.includes("L")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>Large</p>
         </div>
         <div onClick={()=>setSizes(prev => prev.includes("XL")?prev.filter(item=>item!=="XL"):[...prev,"XL"])}>
           <p className={`${sizes.includes("XL")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>XL</p>
         </div>
         <div onClick={()=>setSizes(prev => prev.includes("XXL")?prev.filter(item=>item!=="XXL"):[...prev,"XXL"])}>
           <p className={`${sizes.includes("XXL")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>XXL</p>
+        </div>
+        <div onClick={()=>setSizes(prev => prev.includes("Customized")?prev.filter(item=>item!=="Customized"):[...prev,"Customized"])}>
+          <p className={`${sizes.includes("Customized")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>Customized</p>
         </div>
       </div>
     </div>
@@ -146,7 +152,7 @@ const Add = ({token}) => {
       <input onChange={()=>setBestseller(prev=>!prev)} checked={bestseller} type="checkbox" id="bestseller" />
       <label htmlFor="bestseller" className='cursor-pointer'>Add to Bestseller</label>
     </div>
-    <button type="submit" className='w-28 py-3 mt-4 bg-black text-white'>{loading?'Adding...':'ADD'}</button>
+    <button type="submit" disabled={submit} className='w-28 py-3 mt-4 bg-black text-white'>{loading?'Adding...':'ADD'}</button>
   </form>
   )
 }

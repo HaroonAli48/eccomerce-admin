@@ -83,7 +83,7 @@ return (
             </div>
             <div>
               {order.items.map((item, idx) => (
-                <p className="py-0.5" key={idx}>
+                <p  className={`${item.size==='Customized'?'font-bold text-red-600':''} py-0.5`} key={idx}>
                   {item.name} x {item.quantity} <span> {item.size}</span>
                   {idx !== order.items.length - 1 && ","}
                 </p>
