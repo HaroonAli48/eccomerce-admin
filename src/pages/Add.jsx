@@ -106,6 +106,7 @@ const Add = ({token}) => {
             <option value="Women">Women</option>
             <option value="Men">Men</option>
             <option value="Kids">Kids</option>
+            <option value="Watches">Watch</option>
           </select>
         </div>
         
@@ -116,6 +117,7 @@ const Add = ({token}) => {
             <option value="Topwear">Topwear</option>
             <option value="Bottomwear">Bottomwear</option>
             <option value="Winterwear">Winterwear</option>
+            <option value="Accessories">Accessories</option>
           </select>
         </div>
         <div>
@@ -124,7 +126,7 @@ const Add = ({token}) => {
         </div>
       </div>
     </div>
-    <div>
+    {subCategory==='Accessories'?null:<div>
       <p className='mb-2'>Product Sizes</p>
       <div className='grid grid-cols-[1fr_1fr_2fr] gap-3'>
         <div onClick={()=>setSizes(prev => prev.includes("S")?prev.filter(item=>item!=="S"):[...prev,"S"])}>
@@ -146,7 +148,7 @@ const Add = ({token}) => {
           <p className={`${sizes.includes("Customized")?"bg-pink-100":"bg-slate-200"} px-3 py-1 cursor-pointer`}>Customized</p>
         </div>
       </div>
-    </div>
+    </div>}
 
     <div className='flex gap-2 mt-2'>
       <input onChange={()=>setBestseller(prev=>!prev)} checked={bestseller} type="checkbox" id="bestseller" />

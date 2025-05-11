@@ -5,7 +5,7 @@ const Delivered = () => {
 
   return (
     <div>
-      <h2>Orders</h2>
+      <h2>Delivered Orders</h2>
       {orders.map((order,index) => (
         
          <div
