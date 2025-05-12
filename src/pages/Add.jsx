@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios';
 import { backendUrl } from '../App';
@@ -20,6 +20,16 @@ const Add = ({token}) => {
   const [sizes,setSizes] = useState([]);
   const [loading,setLoading] = useState(false);
   const [submit, setSubmit]  = useState(false)
+
+
+  
+useEffect(() => {
+  if (category === "Oil" || category === "Makeup" || category === "Jewellery" || category === "Watches") {
+    setSubCategory("Accessories");
+  } else {
+    setSubCategory("Summerwear"); 
+  }
+}, [category]);
 
   const onSubmitHandler = async (e)=>{
     e.preventDefault();
@@ -107,17 +117,21 @@ const Add = ({token}) => {
             <option value="Men">Men</option>
             <option value="Kids">Kids</option>
             <option value="Watches">Watch</option>
+            <option value="Jewellery">Jewellery</option>
+            <option value="Makeup">Beauty and cosmetics</option>
+            <option value="Oil">Oil</option>
           </select>
         </div>
         
         <div>
           <p className='mb-2'>Sub Category</p>
           <select className='w-full px-3 py-2' onChange={(e)=>setSubCategory(e.target.value)}>
+            {category==="Oil"||category==="Makeup"||category==="Jewellery"||category==="Watches"?<><option value="Accessories">Accessories</option> </>:
+            <>
             <option value="Summerwear">Summerwear</option>
             <option value="Topwear">Topwear</option>
             <option value="Bottomwear">Bottomwear</option>
-            <option value="Winterwear">Winterwear</option>
-            <option value="Accessories">Accessories</option>
+            <option value="Winterwear">Winterwear</option></>}
           </select>
         </div>
         <div>
