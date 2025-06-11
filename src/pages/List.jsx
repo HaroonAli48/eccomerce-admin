@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { backendUrl, currency } from '../App';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { backendUrl, currency } from "../App";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const List = ({ token }) => {
   const [list, setList] = useState([]);
@@ -9,7 +9,7 @@ const List = ({ token }) => {
 
   const fetchList = async () => {
     try {
-      const response = await axios.get(backendUrl+'/api/product/list');
+      const response = await axios.get(backendUrl + "/api/product/list");
       if (response.data.success) {
         setList(response.data.products);
       } else {
@@ -24,7 +24,7 @@ const List = ({ token }) => {
   const removeProduct = async (id) => {
     try {
       const response = await axios.post(
-        backendUrl+'/api/product/remove',
+        backendUrl + "/api/product/remove",
         { id },
         { headers: { token } }
       );
@@ -41,17 +41,18 @@ const List = ({ token }) => {
     }
   };
 
-  const toggleStatus = async (id, stock) => {
+  const toggleStatus = async (id, currentStock) => {
     try {
-      const updatedStock = !stock;
+      const updatedStock = !currentStock;
+
       const response = await axios.post(
-        backendUrl+'/api/product/update',
+        backendUrl + "/api/product/update",
         { id, stock: updatedStock },
         { headers: { token } }
       );
 
       if (response.data.success) {
-        toast.success('Stock status updated');
+        toast.success("Stock status updated");
         fetchList();
       } else {
         toast.error(response.data.message);
@@ -84,7 +85,11 @@ const List = ({ token }) => {
             className="grid grid-cols-[1fr_2fr_1fr_1fr_0.5fr_0.5fr] md:grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 gap-2 text-sm"
             key={index}
           >
-            <img className="min-w-12 max-w-12" src={item.image[0]} alt={item.name} />
+            <img
+              className="min-w-12 max-w-12"
+              src={item.image[0]}
+              alt={item.name}
+            />
             <p>{item.name}</p>
             <p>{item.category}</p>
             <p>
@@ -99,8 +104,7 @@ const List = ({ token }) => {
             </p>
             <input
               type="checkbox"
-              checked={Boolean(item.stock)} // Ensure it's always boolean
-              name="stock"
+              checked={Boolean(item.stock)}
               onChange={() => {
                 window.location.reload();
                 toggleStatus(item._id, item.stock);

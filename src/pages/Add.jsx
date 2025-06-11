@@ -18,7 +18,9 @@ const Add = ({token}) => {
   const [subCategory,setSubCategory] = useState("Summerwear");
   const [bestseller,setBestseller] = useState(false);
   const [sizes,setSizes] = useState([]);
+  const [colours,setColours] = useState([]);
   const [loading,setLoading] = useState(false);
+  const [selectedColor,setSelected] = useState();
   const [submit, setSubmit]  = useState(false)
 
 
@@ -46,6 +48,7 @@ useEffect(() => {
       formData.append("subCategory",subCategory)
       formData.append("bestseller",bestseller?true:false)
       formData.append("sizes",JSON.stringify(sizes))
+      formData.append('colours',JSON.stringify(colours))
 
       image1 && formData.append("image1",image1)
       image2 && formData.append("image2",image2)
@@ -64,6 +67,7 @@ useEffect(() => {
         setImage4(false)
         setPrice('')
         setSizes([])
+        setColours([]);
       }else{
         toast.error(response.data.message)
       }
@@ -164,11 +168,55 @@ useEffect(() => {
       </div>
     </div>}
 
+   <p className='mb-2 mt-4'>Product Colours</p>
+<div className="flex items-center gap-2">
+  <p>Select Colour:</p>
+  <input
+    className='rounded-full p-1 h-8 w-8 cursor-pointer'
+    type="color"
+    value={selectedColor || "#000000"}
+    onChange={(e) => setSelected(e.target.value)}
+  />
+  <button
+    type="button"
+    className="bg-black text-white px-3 py-1 rounded hover:bg-gray-600"
+    onClick={() => {
+      if (selectedColor && !colours.includes(selectedColor)) {
+        setColours([...colours, selectedColor]);
+      }
+    }}
+  >
+    Add Colour
+  </button>
+</div>
+
+{/* Display selected colors */}
+<div className="flex flex-wrap gap-2 mt-2">
+  {colours.map((color, index) => (
+    <div key={index} className="flex items-center gap-1">
+      <div
+        style={{ backgroundColor: color }}
+        className="w-6 h-6 rounded border border-gray-400"
+        title={color}
+      />
+      <button
+        type="button"
+        onClick={() => setColours(colours.filter(c => c !== color))}
+        className="text-red-500 text-xs hover:text-red-700"
+      >
+        ✕
+      </button>
+    </div>
+  ))}
+</div>
+
+
+
     <div className='flex gap-2 mt-2'>
       <input onChange={()=>setBestseller(prev=>!prev)} checked={bestseller} type="checkbox" id="bestseller" />
       <label htmlFor="bestseller" className='cursor-pointer'>Add to Bestseller</label>
     </div>
-    <button type="submit" disabled={submit} className='w-28 py-3 mt-4 bg-black text-white'>{loading?'Adding...':'ADD'}</button>
+    <button type="submit" disabled={submit} className='w-28 py-3 mt-4 bg-black hover:bg-gray-600 rounded text-white'>{loading?'Adding...':'ADD'}</button>
   </form>
   )
 }

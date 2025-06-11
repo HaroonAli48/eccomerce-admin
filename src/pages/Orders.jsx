@@ -82,12 +82,33 @@ return (
               ))}
             </div>
             <div>
-              {order.items.map((item, idx) => (
-                <p  className={`${item.size==='Customized'?'font-bold text-red-600':''} py-0.5`} key={idx}>
-                  {item.name} x {item.quantity} <span> {item.size}</span>
-                  {idx !== order.items.length - 1 && ","}
-                </p>
-              ))}
+              {order.items.map((item, idx) => {
+  const isCustomized = item.size === 'Customized';
+  const [size, colour] = isCustomized ? [item.size] : item.size.split('-');
+
+  return (
+    <p
+      key={idx}
+      className={`${isCustomized ? 'font-bold text-red-600' : ''} py-0.5 flex items-center gap-2`}
+    >
+      {item.name} x {item.quantity}
+
+      <span className="ml-1">
+        Size: {size}
+      </span>
+
+      {!isCustomized && colour && (
+        <span
+          className="w-4 h-4 rounded-full border inline-block ml-1"
+          style={{ backgroundColor: colour }}
+        />
+      )}
+
+      {idx !== order.items.length - 1 && <span>,</span>}
+    </p>
+  );
+})}
+
               <p className="mt-3 mb-2 font-medium">
                 {order.address.firstName + " " + order.address.lastName}
               </p>
