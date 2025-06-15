@@ -28,7 +28,7 @@ const Add = ({token}) => {
 useEffect(() => {
   if (category === "Oil" || category === "Makeup" || category === "Jewellery" || category === "Watches") {
     setSubCategory("Accessories");
-  } else {
+  } else{ 
     setSubCategory("Summerwear"); 
   }
 }, [category]);
@@ -37,8 +37,13 @@ useEffect(() => {
     e.preventDefault();
     setLoading(true);
     setSubmit(true)
+    if (price===0) {
+      toast.error("Add a valid price!")
+      return
+    }
     try {
       
+
       const formData = new FormData();
 
       formData.append("name",name)
