@@ -6,47 +6,61 @@ import Add from "./pages/Add";
 import List from "./pages/List";
 import Orders from "./pages/Orders";
 import Login from "./components/Login";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { OrdersProvider } from "./context/OrdersContext";
 import Delivered from "./pages/Delivered";
 import HeroEdit from "./pages/HeroEdit";
 import Edit from "./pages/Edit";
-export const backendUrl = import.meta.env.VITE_BACKEND_URL
-export const currency = 'PKR '
+import AddCategory from "./pages/AddCategory";
+export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+export const currency = "PKR ";
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):'');
+  const [token, setToken] = useState(
+    localStorage.getItem("token") ? localStorage.getItem("token") : ""
+  );
 
-  useEffect(()=>{
-    localStorage.setItem('token',token)
-  },[token])
+  useEffect(() => {
+    localStorage.setItem("token", token);
+  }, [token]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <ToastContainer/>
-      { token === ''
-        ? <Login setToken={setToken}/>
-        : <>
-          <Navbar setToken={setToken}/>
+      <ToastContainer />
+      {token === "" ? (
+        <Login setToken={setToken} />
+      ) : (
+        <>
+          <Navbar setToken={setToken} />
           <hr />
           <div className="flex w-full">
             <Sidebar />
             <div className="w-[70%] mx-auto ml-[max(5vw,25px)] my-8 text-gray-600 text-base">
-            <OrdersProvider token={token}>
-              <Routes>
-                <Route path="/add" element={<Add token={token} />} />
-                <Route path="/list" element={<List token={token} />} />
-                <Route path="/orders" element={<Orders token={token} />} />
-                <Route path="/delivered" element={<Delivered token={token} />} />
-                <Route path='/edit' element={<HeroEdit token={token} />} />
-                <Route path="/editProducts" element={<Edit token={token}/>}/>
-              </Routes>
+              <OrdersProvider token={token}>
+                <Routes>
+                  <Route path="/add" element={<Add token={token} />} />
+                  <Route path="/list" element={<List token={token} />} />
+                  <Route path="/orders" element={<Orders token={token} />} />
+                  <Route
+                    path="/delivered"
+                    element={<Delivered token={token} />}
+                  />
+                  <Route path="/edit" element={<HeroEdit token={token} />} />
+                  <Route
+                    path="/editProducts"
+                    element={<Edit token={token} />}
+                  />
+                  <Route
+                    path="/categories"
+                    element={<AddCategory token={token} />}
+                  />
+                </Routes>
               </OrdersProvider>
             </div>
           </div>
-          </>
-      }
+        </>
+      )}
     </div>
   );
 };

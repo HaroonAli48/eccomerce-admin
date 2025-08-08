@@ -18,6 +18,8 @@ const Edit = ({ token }) => {
   const [list, setList] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchList = async () => {
@@ -33,6 +35,34 @@ const Edit = ({ token }) => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(backendUrl + "/api/category/get");
+      if (response.data.success) {
+        setCategories(response.data.category);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const fetchSubCategories = async () => {
+    try {
+      const response = await axios.get(
+        backendUrl + "/api/category/getSubCategories"
+      );
+      if (response.data.success) {
+        setSubCategories(response.data.subCategory);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const handleEdit = (index) => {
     const selected = list[index];
     setEditData({
@@ -40,6 +70,7 @@ const Edit = ({ token }) => {
       name: selected.name || "",
       description: selected.description || "",
       price: selected.price || "",
+      discount: selected.discount || 0,
       category: selected.category || "",
       subCategory: selected.subCategory || "",
       sizes: selected.sizes,
@@ -68,7 +99,8 @@ const Edit = ({ token }) => {
           id: editData._id,
           name: editData.name,
           description: editData.description,
-          price: editData.price,
+          price: parseFloat(Number(editData.price).toFixed(2)),
+          discount: parseFloat(Number(editData.discount).toFixed(2)) || 0,
           category: editData.category,
           subCategory: editData.subCategory,
           sizes: editData.sizes,
@@ -76,9 +108,7 @@ const Edit = ({ token }) => {
           bestseller: editData.bestseller,
           stock: editData.stock,
         },
-        {
-          headers: { token },
-        }
+        { headers: { token } }
       );
 
       if (res.data.success) {
@@ -97,7 +127,10 @@ const Edit = ({ token }) => {
 
   useEffect(() => {
     fetchList();
+    fetchCategories();
+    fetchSubCategories();
   }, []);
+  // ye maine likha tha ~Haroon pyare wala
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
@@ -124,6 +157,14 @@ const Edit = ({ token }) => {
                     placeholder="Price"
                     className="input"
                   />
+                  <input
+                    type="number"
+                    name="discount"
+                    value={editData.discount}
+                    onChange={handleChange}
+                    placeholder="Enter Discounted Price (optional)"
+                    className="input"
+                  />
                   <select
                     name="category"
                     value={editData.category}
@@ -131,14 +172,14 @@ const Edit = ({ token }) => {
                     className="input"
                   >
                     {" "}
-                    <option value="Women">Women</option>
-                    <option value="Men">Men</option>
-                    <option value="Kids">Kids</option>
-                    <option value="Footwear">Footwear</option>
-                    <option value="Watches">Watch</option>
-                    <option value="Jewellery">Jewellery</option>
-                    <option value="Makeup">Beauty and cosmetics</option>
-                    <option value="Oil">Oil</option>
+                    <>
+                      <option value="">Select Category</option>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </>
                   </select>
 
                   <select
@@ -147,48 +188,39 @@ const Edit = ({ token }) => {
                     onChange={handleChange}
                     className="input"
                   >
-                    {editData.category === "Oil" ||
-                    editData.category === "Makeup" ||
-                    editData.category === "Jewellery" ||
-                    editData.category === "Watches" ? (
-                      <>
-                        <option value="Accessories">Accessories</option>{" "}
-                      </>
-                    ) : (
-                      <>
-                    <option value="">Select Sub Category</option>
-                        <option value="Summerwear">Summerwear</option>
-                        <option value="Topwear">Topwear</option>
-                        <option value="Bottomwear">Bottomwear</option>
-                        <option value="Winterwear">Winterwear</option>
-                      </>
-                    )}
+                    {subCategories.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
                   </select>
                   <div>
                     <label className="block mb-2 font-medium text-gray-700">
                       Sizes
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {["S", "M", "L", "XL", "XXL","Customized"].map((size) => (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => {
-                            const exists = editData.sizes?.includes(size);
-                            const updated = exists
-                              ? editData.sizes.filter((s) => s !== size)
-                              : [...(editData.sizes || []), size];
-                            setEditData({ ...editData, sizes: updated });
-                          }}
-                          className={`px-3 py-1 rounded border ${
-                            editData.sizes?.includes(size)
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-gray-700"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
+                      {["S", "M", "L", "XL", "XXL", "Customized"].map(
+                        (size) => (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => {
+                              const exists = editData.sizes?.includes(size);
+                              const updated = exists
+                                ? editData.sizes.filter((s) => s !== size)
+                                : [...(editData.sizes || []), size];
+                              setEditData({ ...editData, sizes: updated });
+                            }}
+                            className={`px-3 py-1 rounded border ${
+                              editData.sizes?.includes(size)
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-gray-700"
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
@@ -299,7 +331,7 @@ const Edit = ({ token }) => {
                   <p className="font-semibold text-lg">{item.name}</p>
                   <p className="text-sm text-gray-600">
                     {currency}
-                    {item.price} | {item.category}
+                    {item.price} {item.discount} | {item.category}
                   </p>
                   <p className="text-sm text-gray-500 line-clamp-2">
                     {item.description?.slice(0, 100)}...

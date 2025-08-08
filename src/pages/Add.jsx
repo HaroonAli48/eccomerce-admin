@@ -3,6 +3,7 @@ import { assets } from "../assets/assets";
 import axios from "axios";
 import { backendUrl } from "../App";
 import { toast } from "react-toastify";
+import { use } from "react";
 
 const Add = ({ token }) => {
   const [image1, setImage1] = useState(false);
@@ -13,8 +14,10 @@ const Add = ({ token }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("Women");
-  const [subCategory, setSubCategory] = useState("Summerwear");
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [colours, setColours] = useState([]);
@@ -23,17 +26,33 @@ const Add = ({ token }) => {
   const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
-    if (
-      category === "Oil" ||
-      category === "Makeup" ||
-      category === "Jewellery" ||
-      category === "Watches"
-    ) {
-      setSubCategory("Accessories");
-    } else {
-      setSubCategory("Summerwear");
+    fetchCategories();
+    fetchSubCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(backendUrl + "/api/category/get");
+      if (res.data.success) {
+        setCategories(res.data.category);
+      }
+    } catch (err) {
+      console.error("Error fetching categories:", err);
     }
-  }, [category]);
+  };
+
+  const fetchSubCategories = async () => {
+    try {
+      const res = await axios.get(
+        backendUrl + "/api/category/getSubCategories"
+      );
+      if (res.data.success) {
+        setSubCategories(res.data.subCategory);
+      }
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+    }
+  };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -41,8 +60,8 @@ const Add = ({ token }) => {
     setSubmit(true);
     if (price === 0) {
       toast.error("Add a valid price!");
-      setSubmit(false)
-      setLoading(false)
+      setSubmit(false);
+      setLoading(false);
       return;
     }
     try {
@@ -90,7 +109,9 @@ const Add = ({ token }) => {
       setSubmit(false);
     }
   };
-
+  if (!token) {
+    return <div className="text-center">Please login to add products.</div>;
+  }
   return (
     <form
       onSubmit={onSubmitHandler}
@@ -181,14 +202,15 @@ const Add = ({ token }) => {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-3 py-2"
             >
-              <option value="Women">Women</option>
-              <option value="Men">Men</option>
-              <option value="Kids">Kids</option>
-              <option value="Footwear">Footwear</option>
-              <option value="Watches">Watch</option>
-              <option value="Jewellery">Jewellery</option>
-              <option value="Makeup">Beauty and cosmetics</option>
-              <option value="Oil">Oil</option>
+              {categories.length > 0 ? (
+                categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))
+              ) : (
+                <option value="">No categories available</option>
+              )}
             </select>
           </div>
 
@@ -198,20 +220,14 @@ const Add = ({ token }) => {
               className="w-full px-3 py-2"
               onChange={(e) => setSubCategory(e.target.value)}
             >
-              {category === "Oil" ||
-              category === "Makeup" ||
-              category === "Jewellery" ||
-              category === "Watches" ? (
-                <>
-                  <option value="Accessories">Accessories</option>{" "}
-                </>
+              {subCategories.length > 0 ? (
+                subCategories.map((subCat) => (
+                  <option key={subCat} value={subCat}>
+                    {subCat}
+                  </option>
+                ))
               ) : (
-                <>
-                  <option value="Summerwear">Summerwear</option>
-                  <option value="Topwear">Topwear</option>
-                  <option value="Bottomwear">Bottomwear</option>
-                  <option value="Winterwear">Winterwear</option>
-                </>
+                <option value="">No subcategories available</option>
               )}
             </select>
           </div>
@@ -336,10 +352,11 @@ const Add = ({ token }) => {
           </div>
         </div>
       )}
-      {
-      category==='Jewellery'||
-      category==='Makeup'||
-      category==='Oil'?"":
+      {category === "Jewellery" ||
+      category === "Makeup" ||
+      category === "Oil" ? (
+        ""
+      ) : (
         <>
           <p className="mb-2 mt-4">Product Colours:</p>
           <div className="flex items-center gap-2">
@@ -363,7 +380,7 @@ const Add = ({ token }) => {
             </button>
           </div>
         </>
-      }
+      )}
 
       <div className="flex flex-wrap gap-2 mt-2">
         {colours.map((color, index) => (
