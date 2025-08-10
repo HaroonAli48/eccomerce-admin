@@ -76,6 +76,7 @@ const Edit = ({ token }) => {
       sizes: selected.sizes,
       colours: selected.colours,
       bestseller: selected.bestseller || false,
+      hotSeller: selected.hotSeller || false,
       stock: selected.stock || false,
     });
     setEditIndex(index);
@@ -106,6 +107,7 @@ const Edit = ({ token }) => {
           sizes: editData.sizes,
           colours: editData.colours,
           bestseller: editData.bestseller,
+          hotSeller: editData.hotSeller,
           stock: editData.stock,
         },
         { headers: { token } }
@@ -291,6 +293,19 @@ const Edit = ({ token }) => {
                       }
                     />
                     Bestseller
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={editData.hotSeller}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          hotSeller: e.target.checked,
+                        })
+                      }
+                    />
+                    Hotseller
                   </label>
                   <label className="flex items-center gap-2">
                     <input
