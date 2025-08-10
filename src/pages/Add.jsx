@@ -19,6 +19,7 @@ const Add = ({ token }) => {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [bestseller, setBestseller] = useState(false);
+  const [hotseller, setHotseller] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [colours, setColours] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,6 +74,7 @@ const Add = ({ token }) => {
       formData.append("category", category);
       formData.append("subCategory", subCategory);
       formData.append("bestseller", bestseller ? true : false);
+      formData.append("hotSeller", hotseller ? true : false);
       formData.append("sizes", JSON.stringify(sizes));
       formData.append("colours", JSON.stringify(colours));
 
@@ -93,6 +95,8 @@ const Add = ({ token }) => {
         setDescription("");
         setImage1(false);
         setImage2(false);
+        setCategory("");
+        setSubCategory("");
         setImage3(false);
         setImage4(false);
         setPrice("");
@@ -202,6 +206,7 @@ const Add = ({ token }) => {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-3 py-2"
             >
+              <option value="">--Select--</option>
               {categories.length > 0 ? (
                 categories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -220,6 +225,7 @@ const Add = ({ token }) => {
               className="w-full px-3 py-2"
               onChange={(e) => setSubCategory(e.target.value)}
             >
+              <option value="">--Select--</option>
               {subCategories.length > 0 ? (
                 subCategories.map((subCat) => (
                   <option key={subCat} value={subCat}>
@@ -403,13 +409,30 @@ const Add = ({ token }) => {
 
       <div className="flex gap-2 mt-2">
         <input
-          onChange={() => setBestseller((prev) => !prev)}
+          onChange={() => {
+            setBestseller((prev) => !prev);
+            console.log(bestseller);
+          }}
           checked={bestseller}
           type="checkbox"
           id="bestseller"
         />
         <label htmlFor="bestseller" className="cursor-pointer">
           Add to Bestseller
+        </label>
+      </div>
+      <div className="flex gap-2 mt-2">
+        <input
+          type="checkbox"
+          id="hotseller"
+          checked={hotseller}
+          onChange={() => {
+            setHotseller((prev) => !prev); // safer toggle
+          }}
+        />
+
+        <label htmlFor="hotseller" className="cursor-pointer">
+          Add to Hot Sellers
         </label>
       </div>
       <button
