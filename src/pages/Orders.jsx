@@ -4,6 +4,7 @@ import { backendUrl, currency } from "../App";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 import Delivered from "./Delivered";
+
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
 
@@ -42,52 +43,53 @@ const Orders = ({ token }) => {
     window.open(whatsappUrl, "_blank");
   };
 
-  
-const statusHandler = async (event, orderId) => {
-  try {
-    const status = event.target.value;
-    const order = orders.find((o) => o._id === orderId);
+  const statusHandler = async (event, orderId) => {
+    try {
+      const status = event.target.value;
+      const order = orders.find((o) => o._id === orderId);
 
-    if (!order) {
-      toast.error("Order not found.");
-      return;
+      if (!order) {
+        toast.error("Order not found.");
+        return;
+      }
+
+      if (
+        status === "Delivered" &&
+        order.payment !== true &&
+        order.paymentMethod !== "COD"
+      ) {
+        toast.error("Payment is unpaid. Cannot mark as Delivered.");
+        return;
+      }
+
+      const payload = { orderId, status };
+
+      if (status === "Paid") {
+        payload.payment = true;
+      }
+
+      if (status === "Unpaid") {
+        payload.payment = false;
+      }
+
+      const response = await axios.post(
+        backendUrl + "/api/order/status",
+        payload,
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        fetchAllOrders();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
     }
-
-    if (status === "Delivered" && order.payment !== true && order.paymentMethod !== "COD") {
-      toast.error("Payment is unpaid. Cannot mark as Delivered.");
-      return;
-    }
-
-    const payload = { orderId, status };
-
-    if (status === "Paid") {
-      payload.payment = true;
-    }
-
-    if (status === "Unpaid") {
-      payload.payment = false;
-    }
-
-    const response = await axios.post(
-      backendUrl + "/api/order/status",
-      payload,
-      { headers: { token } }
-    );
-
-    if (response.data.success) {
-      fetchAllOrders();
-    }
-  } catch (error) {
-    console.log(error);
-    toast.error(error.message);
-  }
-};
-
+  };
 
   useEffect(() => {
     fetchAllOrders();
   }, [token]);
-  console.log(orders);
 
   return (
     <div>
@@ -105,6 +107,8 @@ const statusHandler = async (event, orderId) => {
                 <div className="grid grid-rows-1 grid-cols-[1fr_1fr] gap-4">
                   {order.items.map((item, idx) => (
                     <div key={idx}>
+                      {console.log(item.name, item.image)}
+
                       <img
                         className="min-w-20"
                         src={item.image[0]}
@@ -135,7 +139,7 @@ const statusHandler = async (event, orderId) => {
                             className="w-8 h-4 rounded-full border inline-block ml-1"
                             style={{ backgroundColor: colour }}
                           />
-                        )}      
+                        )}
                         {idx !== order.items.length - 1 && <span>,</span>}
                       </p>
                     );
@@ -145,10 +149,6 @@ const statusHandler = async (event, orderId) => {
                     {order.address.firstName + " " + order.address.lastName}
                   </p>
                   <p>{order.address.street}</p>
-                  <p>
-                    {order.address.city}, {order.address.state},{" "}
-                    {order.address.country}, {order.address.zipcode}
-                  </p>
                   <p>Phone Number: {order.address.phone}</p>
                 </div>
                 <div>
@@ -156,7 +156,13 @@ const statusHandler = async (event, orderId) => {
                     Items: {order.items.length}
                   </p>
                   <p className="mt-3">Method: {order.paymentMethod}</p>
-                  <p className={`mt-3 ${!order.payment ? 'text-red-500 font-semibold' : ''}`}>Payment: {order.payment ? "Done" : "Pending"}</p>
+                  <p
+                    className={`mt-3 ${
+                      !order.payment ? "text-red-500 font-semibold" : ""
+                    }`}
+                  >
+                    Payment: {order.payment ? "Done" : "Pending"}
+                  </p>
                   <p>Date: {new Date(order.date).toLocaleDateString()}</p>
                 </div>
                 <div>
@@ -190,9 +196,7 @@ const statusHandler = async (event, orderId) => {
                     <option value="Paid">Paid</option>
                   )}
                   <option value="Out for delivery">Out For Delivery</option>
-                  <option value="Delivered">
-                    Delivered
-                  </option>
+                  <option value="Delivered">Delivered</option>
                 </select>
               </div>
             )
