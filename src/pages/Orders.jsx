@@ -196,6 +196,7 @@ const Orders = ({ token }) => {
                   {order.paymentMethod === "COD" ? null : (
                     <option value="Paid">Paid</option>
                   )}
+                  <option value="Packing">Packing</option>
                   <option value="Out for delivery">Out For Delivery</option>
                   <option value="Delivered">Delivered</option>
                 </select>
