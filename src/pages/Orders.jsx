@@ -107,8 +107,6 @@ const Orders = ({ token }) => {
                 <div className="grid grid-rows-1 grid-cols-[1fr_1fr] gap-4">
                   {order.items.map((item, idx) => (
                     <div key={idx}>
-                      {console.log(item.name, item.image)}
-
                       <img
                         className="min-w-20"
                         src={item.image[0]}
@@ -148,7 +146,10 @@ const Orders = ({ token }) => {
                   <p className="mt-3 mb-2 font-medium">
                     {order.address.firstName + " " + order.address.lastName}
                   </p>
-                  <p>{order.address.street}</p>
+                  <p>{order.address.street} </p>
+                  <p className="font-bold text-md">
+                    City: {order.address.city}
+                  </p>
                   <p>Phone Number: {order.address.phone}</p>
                 </div>
                 <div>
