@@ -4,6 +4,7 @@ import { backendUrl, currency } from "../App";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 import Delivered from "./Delivered";
+import { Trash2 } from "lucide-react";
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
@@ -20,7 +21,6 @@ const Orders = ({ token }) => {
 
       if (response.data.success) {
         setOrders(response.data.orders);
-        console.log(orders);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -87,6 +87,24 @@ const Orders = ({ token }) => {
     }
   };
 
+  const deleteOrder = async (id) => {
+    try {
+      const response = await axios.post(backendUrl + "/api/order/delete", {
+        orderId: id,
+      });
+
+      if (response.data.success) {
+        fetchAllOrders();
+        toast.success("Order Deleted Successfully");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    } finally {
+      fetchAllOrders();
+    }
+  };
+
   useEffect(() => {
     fetchAllOrders();
   }, [token]);
@@ -94,7 +112,8 @@ const Orders = ({ token }) => {
   return (
     <div>
       <h3>Order Page</h3>
-      {orders.length === 0 ? (
+      {orders.length > 0 ? `${orders.length} orders found` : ""}
+      {orders.status !== "Delivered" && orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
         orders.map(
@@ -183,23 +202,33 @@ const Orders = ({ token }) => {
                     Message
                   </div>
                 </div>
-
-                <select
-                  onChange={(event) => statusHandler(event, order._id)}
-                  value={order.status}
-                  className="p-2 font-semibold"
-                >
-                  <option value="Order Placed">Order Placed</option>
-                  {order.paymentMethod === "COD" ? null : (
-                    <option value="Unpaid">Unpaid</option>
-                  )}
-                  {order.paymentMethod === "COD" ? null : (
-                    <option value="Paid">Paid</option>
-                  )}
-                  <option value="Packing">Packing</option>
-                  <option value="Out for delivery">Out For Delivery</option>
-                  <option value="Delivered">Delivered</option>
-                </select>
+                <div className="flex flex-col gap-3">
+                  <select
+                    onChange={(event) => statusHandler(event, order._id)}
+                    value={order.status}
+                    className="p-2 font-semibold"
+                  >
+                    <option value="Order Placed">Order Placed</option>
+                    {order.paymentMethod === "COD" ? null : (
+                      <option value="Unpaid">Unpaid</option>
+                    )}
+                    {order.paymentMethod === "COD" ? null : (
+                      <option value="Paid">Paid</option>
+                    )}
+                    <option value="Packing">Packing</option>
+                    <option value="Out for delivery">Out For Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                  <button
+                    onClick={() => {
+                      deleteOrder(order._id);
+                    }}
+                    className="flex items-center gap-2 px-3 py-1.5 text-red-600 border border-red-600 rounded hover:bg-red-600 hover:text-white transition"
+                  >
+                    <Trash2 size={16} />
+                    Delete
+                  </button>
+                </div>
               </div>
             )
         )
