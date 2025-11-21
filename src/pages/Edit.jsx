@@ -227,7 +227,6 @@ const Edit = ({ token }) => {
                   </div>
                 </div>
 
-                {/* Colours */}
                 <div className="mt-4">
                   <label className="block mb-2 font-medium text-gray-700">
                     Colours

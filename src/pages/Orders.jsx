@@ -35,7 +35,7 @@ const Orders = ({ token }) => {
     const orderAmount = `${currency}${order.amount}`;
     const phoneNumber = `${order.address.phone}`;
 
-    const message = `Dear ${customerName},\n\nThank you for placing your order with us! We have successfully received your order for:\n ${orderItems}.\n The total amount due is *${orderAmount}*.\nTo complete the payment process, please deposit the amount into our JazzCash account:\n\nNumber: 03335273923\n\nAfter making the payment, kindly send us the receipt screenshot. We will promptly verify your payment, update your order status, and ensure that your order is delivered to you soon.\n\nThank you for choosing us! We appreciate your business and look forward to serving you.\n\nBest regards,\nArooj Collection`;
+    const message = `Dear ${customerName},\n\nThank you for placing your order with us! We have successfully received your order for:\n ${orderItems}.\n The total amount due is *${orderAmount}*.\nTo complete the payment process, please deposit the amount into our JazzCash account:\n\nNumber: 03017134100\n\nAfter making the payment, kindly send us the receipt screenshot. We will promptly verify your payment, update your order status, and ensure that your order is delivered to you soon.\n\nThank you for choosing us! We appreciate your business and look forward to serving you.\n\nBest regards,\nArooj Collection`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
