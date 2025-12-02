@@ -112,8 +112,13 @@ const Orders = ({ token }) => {
   return (
     <div>
       <h3>Order Page</h3>
-      {orders.length > 0 ? `${orders.length} orders found` : ""}
-      {orders.status !== "Delivered" && orders.length === 0 ? (
+      {orders.length > 0
+        ? `${
+            orders.length -
+            orders.filter((order) => order.status === "Delivered").length
+          } orders found`
+        : ""}
+      {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
         orders.map(

@@ -65,6 +65,12 @@ const Add = ({ token }) => {
       setLoading(false);
       return;
     }
+    if (colours.length === 0) {
+      toast.error("Please add at least one colour!");
+      setSubmit(false);
+      setLoading(false);
+      return;
+    }
     try {
       const formData = new FormData();
 
@@ -116,6 +122,7 @@ const Add = ({ token }) => {
   if (!token) {
     return <div className="text-center">Please login to add products.</div>;
   }
+
   return (
     <form
       onSubmit={onSubmitHandler}
