@@ -185,9 +185,7 @@ const Orders = ({ token }) => {
                     className={`mt-3 ${
                       !order.payment ? "text-red-500 font-semibold" : ""
                     }`}
-                  >
-                    Payment: {order.payment ? "Done" : "Pending"}
-                  </p>
+                  ></p>
                   <p>Date: {new Date(order.date).toLocaleDateString()}</p>
                 </div>
                 <div>

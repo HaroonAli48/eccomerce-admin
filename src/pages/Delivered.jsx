@@ -25,6 +25,7 @@ const Delivered = () => {
       toast.error(err.message);
     }
   };
+
   return (
     <div>
       {orders.length > 0 ? (
@@ -46,20 +47,30 @@ const Delivered = () => {
             ))}
           </div>
           <div>
-            {order.items.map((item, idx) => (
-              <p className="py-0.5" key={idx}>
-                {item.name} x {item.quantity} <span> {item.size}</span>
-                {idx !== order.items.length - 1 && ","}
-              </p>
-            ))}
+            {order.items.map((item, idx) => {
+              const isCustomized = item.size === "Customized";
+              const [size, colour] = isCustomized
+                ? [item.size]
+                : item.size.split("-");
+
+              return (
+                <p className="py-0.5" key={idx}>
+                  {item.name} x {item.quantity} <span> {size}</span>
+                  {idx !== order.items.length - 1 && ","}
+                  {!isCustomized && colour && (
+                    <span
+                      className="w-4 h-4 rounded-full border inline-block ml-1"
+                      style={{ backgroundColor: colour }}
+                    ></span>
+                  )}
+                </p>
+              );
+            })}
             <p className="mt-3 mb-2 font-medium">
               {order.address.firstName + " " + order.address.lastName}
             </p>
             <p>{order.address.street}</p>
-            <p>
-              {order.address.city}, {order.address.state},{" "}
-              {order.address.country}, {order.address.zipcode}
-            </p>
+            <p className="font-bold">{order.address.city}</p>
             <p>Phone Number: {order.address.phone}</p>
           </div>
           <div>
@@ -67,7 +78,6 @@ const Delivered = () => {
               Items: {order.items.length}
             </p>
             <p className="mt-3">Method: {order.paymentMethod}</p>
-            <p>Payment: {order.payment ? "Done" : "Pending"}</p>
             <p>Date: {new Date(order.date).toLocaleDateString()}</p>
           </div>
           <p className="text-sm sm:text-[15px]">
